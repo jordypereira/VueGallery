@@ -42,10 +42,6 @@ $break-large: 980px;
         height: 100px;
         width: 100px;
       }
-      @media screen and (min-width: $break-large) {
-        height: 150px;
-        width: 150px;
-      }
       flex: 1 1 auto;
       margin: 0 10px;
       background-size: cover;

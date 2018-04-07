@@ -14,7 +14,7 @@
       </div>
       <div class="lb-outerContainer">
         <div class="lb-container">
-          <img class="lb-image" :src="currentImage.img" />
+          <img class="lb-image" :src="currentImage.img" ref="image" />
           <div class="lb-nav">
             <a class="lb-prev" @click="previousImage()" :style="{ backgroundImage: `url('${prevIcon}')` }"></a>
             <a class="lb-next" @click="nextImage()" :style="{ backgroundImage: `url('${nextIcon}')` }"></a>
@@ -51,6 +51,7 @@ export default {
       loadingIcon,
       nextIcon,
       prevIcon,
+      dragstart: null,
     };
   },
   methods: {
@@ -58,21 +59,71 @@ export default {
       this.currentImage = this.images[index - 1];
     },
     nextImage: function() {
+      this.$refs.image.classList.add('fadeInRight');
       if (this.imageCount === this.imageTotal) {
         this.imageCount = 1;
       } else {
         this.imageCount++;
       }
+      setTimeout(() => {
+        this.$refs.image.classList.remove('fadeInRight');
+      }, 250);
       this.changeImage(this.imageCount);
     },
     previousImage: function() {
+      this.$refs.image.classList.add('fadeInLeft');
       if (this.imageCount === 1) {
         this.imageCount = this.imageTotal;
       } else {
         this.imageCount--;
       }
+      setTimeout(() => {
+        this.$refs.image.classList.remove('fadeInLeft');
+      }, 250);
       this.changeImage(this.imageCount);
     },
+    handleArrowKeys(e) {
+      if (e.key === 'ArrowRight') {
+        this.nextImage();
+      } else if (e.key === 'ArrowLeft') {
+        this.previousImage();
+      } else if (e.key === 'Escape') {
+        this.$emit('hideSlideshow');
+      }
+    },
+    handleScrollingEvent(e) {
+      e.preventDefault();
+      if (e.deltaY < 0) {
+        this.nextImage();
+      } else if (e.deltaY > 0) {
+        this.previousImage();
+      }
+    },
+    handleDragging(e) {
+      const start = this.dragstart;
+      const end = e.clientX;
+      if (start < end) {
+        this.previousImage();
+      } else this.nextImage();
+    },
+    handleTouch(e) {
+      const start = this.dragstart;
+      const end = e.changedTouches[0].clientX;
+      if (start < end) {
+        this.previousImage();
+      } else this.nextImage();
+    },
+  },
+  created: function() {
+    window.addEventListener('keydown', e => this.handleArrowKeys(e));
+    window.addEventListener('wheel', e => this.handleScrollingEvent(e));
+    window.addEventListener('touchend', e => this.handleTouch(e));
+    window.addEventListener(
+      'touchstart',
+      e => (this.dragstart = e.touches[0].clientX),
+    );
+    window.addEventListener('dragend', e => this.handleDragging(e));
+    window.addEventListener('dragstart', e => (this.dragstart = e.clientX));
   },
 };
 </script>
@@ -99,6 +150,9 @@ $break-large: 980px;
   width: 100%;
   z-index: 10000;
   text-align: center;
+  display: flex;
+  align-items: center;
+  flex-flow: column nowrap;
 }
 
 .lightbox .lb-image {
@@ -114,10 +168,43 @@ $break-large: 980px;
   }
   border-radius: 3px;
   margin: 0 auto;
+  &:hover {
+    cursor: grab;
+  }
+
+  animation-duration: 200ms;
+  animation-fill-mode: both;
+  transition: all 500ms;
+}
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
-.lightbox a img {
-  border: none;
+.fadeInLeft {
+  animation-name: fadeInLeft;
+}
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.fadeInRight {
+  animation-name: fadeInRight;
 }
 
 .lb-outerContainer {
@@ -125,7 +212,6 @@ $break-large: 980px;
   width: 80vw;
   height: auto;
   max-height: 80vh;
-  margin: 0 auto;
 }
 
 .lb-loader {
@@ -147,6 +233,10 @@ $break-large: 980px;
 }
 
 .lb-nav {
+  display: none;
+  @media screen and (min-width: $break-medium) {
+    display: block;
+  }
   position: absolute;
   top: 0;
   left: 0;
@@ -217,25 +307,23 @@ $break-large: 980px;
   color: #999;
 }
 
+.lb-closeContainer {
+  position: fixed;
+  left: 5px;
+  top: 5px;
+}
 .lb-data .lb-close {
   display: block;
   width: 30px;
   height: 30px;
   margin-right: 10px;
   background: top right no-repeat;
-  text-align: right;
-  outline: none;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
   opacity: 0.7;
-  -webkit-transition: opacity 0.2s;
-  -moz-transition: opacity 0.2s;
-  -o-transition: opacity 0.2s;
   transition: opacity 0.2s;
 }
 
 .lb-data .lb-close:hover {
   cursor: pointer;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1;
 }
 </style>
