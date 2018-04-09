@@ -1,9 +1,9 @@
 <template>
-  <div class="s-container">
-    <div class="overlay" @click="$emit('hideSlideshow')"></div>
+  <div class="container">
+    <div class="overlay" @click="this.hideSlideshow()"></div>
 
     <div id="lightbox" class="lightbox">
-      <div class="lb-data"> 
+      <div class="lb-data">
         <div class="lb-closeContainer">
           <a class="lb-close" :style="{ backgroundImage: `url('${closeIcon}')` }" @click="$emit('hideSlideshow')"></a>
         </div>
@@ -113,8 +113,17 @@ export default {
         this.previousImage();
       } else this.nextImage();
     },
+    hideSlideShow() {
+      window.removeEventListener('keydown', handleArrowKeys);
+      window.removeEventListener('wheel', handleScrollingEvent);
+      window.removeEventListener('touchend', handleTouch);
+      window.removeEventListener('touchstart', dragstart);
+      window.removeEventListener('dragend', handleDragging);
+      window.removeEventListener('dragstart', dragstart);
+      $emit('hideSlideshow');
+    },
   },
-  mounted: function() {
+  created: function() {
     window.addEventListener('keydown', e => this.handleArrowKeys(e));
     window.addEventListener('wheel', e => this.handleScrollingEvent(e));
     window.addEventListener('touchend', e => this.handleTouch(e));
