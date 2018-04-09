@@ -3,7 +3,7 @@
     <div class="overlay" @click="$emit('hideSlideshow')"></div>
 
     <div id="lightbox" class="lightbox">
-      <div class="lb-data">
+      <div class="lb-data"> 
         <div class="lb-closeContainer">
           <a class="lb-close" :style="{ backgroundImage: `url('${closeIcon}')` }" @click="$emit('hideSlideshow')"></a>
         </div>
@@ -114,7 +114,7 @@ export default {
       } else this.nextImage();
     },
   },
-  created: function() {
+  mounted: function() {
     window.addEventListener('keydown', e => this.handleArrowKeys(e));
     window.addEventListener('wheel', e => this.handleScrollingEvent(e));
     window.addEventListener('touchend', e => this.handleTouch(e));

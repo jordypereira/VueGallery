@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <project v-for="(project, i) in projects" :key="i" :project="project" :class="project.classes" v-on:showSlideshow="showSlideshow" />
+    <project v-for="(project, i) in projects" :key="i" :project="project" v-on:showSlideshow="showSlideshow" />
     <slideshow v-if="slideshow" :images="images" v-on:hideSlideshow="hideSlideshow" />
   </div>
 </template>
@@ -35,7 +35,6 @@ export default {
   },
   created: function() {
     axios.get('js/projects.json').then(response => {
-      console.log(response);
       this.projects = response.data;
     });
   },
