@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
-    <div class="thumbnails">
-      <div class="thumbnail" v-for="(image, i) in images" :key="i" :style="{ backgroundImage: `url('${image.img}')`}" :class="isCurrent(image)" @click="$emit('setCurrent',i+1)"></div>
+  <div class="t-container">
+    <div class="s-thumbnails">
+      <div class="s-thumbnail" v-for="(image, i) in images" :key="i" :style="{ backgroundImage: `url('${image.img}')`}" :class="isCurrent(image)" @click="$emit('setCurrent',i+1)"></div>
     </div>
   </div>
 </template>
@@ -24,18 +24,19 @@ export default {
 $break-medium: 720px;
 $break-large: 980px;
 
-.container {
+.t-container {
   display: flex;
   justify-content: center;
   position: fixed;
   z-index: 10000;
   bottom: 10px;
+  left: 0;
   width: 75vw;
   margin: 0 12.5vw;
   overflow-x: auto;
-  .thumbnails {
+  .s-thumbnails {
     display: flex;
-    .thumbnail {
+    .s-thumbnail {
       height: 50px;
       width: 50px;
       @media screen and (min-width: $break-medium) {

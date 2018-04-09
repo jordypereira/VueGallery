@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="s-container">
     <div class="overlay" @click="$emit('hideSlideshow')"></div>
 
     <div id="lightbox" class="lightbox">
